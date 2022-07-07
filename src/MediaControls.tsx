@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {ReactElement, useEffect, useRef, useState} from 'react';
 import {
-  Animated, GestureResponderEvent, TouchableWithoutFeedback, View, ViewStyle
-} from "react-native";
-import { PLAYER_STATES } from "./constants/playerStates";
-import { Controls } from "./Controls";
-import styles from "./MediaControls.style";
-import { CustomSliderStyle, Slider } from "./Slider";
-import { Toolbar } from "./Toolbar";
+  Animated,
+  GestureResponderEvent,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle,
+} from 'react-native';
+import {PLAYER_STATES} from './constants/playerStates';
+import {Controls} from './Controls';
+import styles from './MediaControls.style';
+import {CustomSliderStyle, Slider} from './Slider';
+import {Toolbar} from './Toolbar';
 
 export type Props = {
   children: React.ReactNode;
@@ -15,7 +19,6 @@ export type Props = {
   fadeOutDelay?: number;
   isFullScreen: boolean;
   isLoading: boolean;
-  mainColor: string;
   onFullScreen?: (event: GestureResponderEvent) => void;
   onPaused: (playerState: PLAYER_STATES) => void;
   onReplay: () => void;
@@ -29,15 +32,15 @@ export type Props = {
   toolbarStyle?: ViewStyle;
 };
 
-const MediaControls = (props: Props) => {
+const MediaControls = (props: Props): ReactElement => {
   const {
     children,
     containerStyle: customContainerStyle = {},
     duration,
     fadeOutDelay = 700,
     isLoading = false,
-    mainColor = "rgba(12, 83, 175, 0.9)",
     onFullScreen,
+    onPaused,
     onReplay: onReplayCallback,
     onSeek,
     onSeeking,
@@ -48,7 +51,7 @@ const MediaControls = (props: Props) => {
     sliderStyle, // defaults are applied in Slider.tsx
     toolbarStyle: customToolbarStyle = {},
   } = props;
-  const { initialOpacity, initialIsVisible } = (() => {
+  const {initialOpacity, initialIsVisible} = (() => {
     if (showOnStart) {
       return {
         initialOpacity: 1,
@@ -79,8 +82,8 @@ const MediaControls = (props: Props) => {
       delay,
       useNativeDriver: false,
     }).start(result => {
-      /* I noticed that the callback is called twice, when it is invoked and when it completely finished
-      This prevents some flickering */
+      // I noticed that the callback is called twice, when it is invoked and when it completely finished
+      // This prevents some flickering
       if (result.finished) {
         setIsVisible(false);
       }
@@ -106,11 +109,12 @@ const MediaControls = (props: Props) => {
     onReplayCallback();
   };
 
-  const cancelAnimation = () => opacity.stopAnimation(() => setIsVisible(true));
+  const cancelAnimation = () =>
+    opacity.stopAnimation(() => setIsVisible(true));
 
   const onPause = () => {
-    const { playerState, onPaused } = props;
-    const { PLAYING, PAUSED, ENDED } = PLAYER_STATES;
+    //const {playerState, onPaused} = props;
+    const {PLAYING, PAUSED, ENDED} = PLAYER_STATES;
     switch (playerState) {
       case PLAYING: {
         cancelAnimation();
@@ -121,6 +125,8 @@ const MediaControls = (props: Props) => {
         break;
       }
       case ENDED:
+        break;
+      default:
         break;
     }
 
@@ -146,7 +152,8 @@ const MediaControls = (props: Props) => {
     if (doubleTapPotential.current) {
       onDoubleTap();
       doubleTapPotential.current = false;
-    } else { //NOTE: 違ったらダブルタップポテンシャルをtrueにして次のタップを待つ
+    } else {
+      //NOTE: 違ったらダブルタップポテンシャルをtrueにして次のタップを待つ
       doubleTapPotential.current = true;
       setTimeout(() => {
         //NOTE: ダブルタップポテンシャルがtrueのままだとダブルタップじゃないので、シングル
@@ -159,12 +166,12 @@ const MediaControls = (props: Props) => {
         }
       }, DOUBLE_TAP_DELAY);
     }
-  }
+  };
 
   return (
     <TouchableWithoutFeedback accessible={false} onPress={_onPress}>
       <Animated.View
-        style={[styles.container, customContainerStyle, { opacity }]}
+        style={[styles.container, customContainerStyle, {opacity}]}
       >
         {isVisible && (
           <View style={[styles.container, customContainerStyle]}>
@@ -181,13 +188,11 @@ const MediaControls = (props: Props) => {
               onPause={onPause}
               onReplay={onReplay}
               isLoading={isLoading}
-              mainColor={mainColor}
               playerState={playerState}
             />
             <Slider
               progress={progress}
               duration={duration}
-              mainColor={mainColor}
               onFullScreen={onFullScreen}
               playerState={playerState}
               onSeek={onSeek}
