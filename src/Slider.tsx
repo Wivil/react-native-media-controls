@@ -1,41 +1,47 @@
-import React from "react";
-import { TouchableOpacity, View, Text, Image, ViewStyle } from "react-native";
-import RNSlider from "react-native-slider";
-import styles from "./MediaControls.style";
-import { humanizeVideoDuration } from "./utils";
-import { Props as MediaControlsProps } from "./MediaControls";
-import { PLAYER_STATES } from "./constants/playerStates";
+import React, {ReactElement} from 'react';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  ViewStyle,
+} from 'react-native';
+import RNSlider from 'react-native-slider';
+import styles from './MediaControls.style';
+import {humanizeVideoDuration} from './utils';
+import {Props as MediaControlsProps} from './MediaControls';
+import {PLAYER_STATES} from './constants/playerStates';
 
 export type CustomSliderStyle = {
-  containerStyle: ViewStyle;
-  trackStyle: ViewStyle;
-  thumbStyle: ViewStyle;
+  containerStyle?: ViewStyle;
+  trackStyle?: ViewStyle;
+  thumbStyle?: ViewStyle;
 };
 
 type Props = Pick<
   MediaControlsProps,
-  | "progress"
-  | "duration"
-  | "mainColor"
-  | "onFullScreen"
-  | "playerState"
-  | "onSeek"
-  | "onSeeking"
+  | 'progress'
+  | 'duration'
+  | 'onFullScreen'
+  | 'playerState'
+  | 'onSeek'
+  | 'onSeeking'
 > & {
   onPause: () => void;
+  minimumTrackTintColor?: string;
+  maximumTrackTintColor?: string;
   customSliderStyle?: CustomSliderStyle;
 };
 
-const fullScreenImage = require("./assets/ic_fullscreen.png");
-
-const Slider = (props: Props) => {
+const Slider = (props: Props): ReactElement => {
   const {
     customSliderStyle,
     duration,
-    mainColor,
     onFullScreen,
     onPause,
     progress,
+    minimumTrackTintColor,
+    maximumTrackTintColor,
   } = props;
 
   const containerStyle = customSliderStyle?.containerStyle || {};
@@ -43,7 +49,7 @@ const Slider = (props: Props) => {
   const customThumbStyle = customSliderStyle?.thumbStyle || {};
 
   const dragging = (value: number) => {
-    const { onSeeking, playerState } = props;
+    const {onSeeking, playerState} = props;
     onSeeking(value);
 
     if (playerState === PLAYER_STATES.PAUSED) {
@@ -60,7 +66,11 @@ const Slider = (props: Props) => {
 
   return (
     <View
-      style={[styles.controlsRow, styles.progressContainer, containerStyle]}
+      style={[
+        styles.controlsRow,
+        styles.progressContainer,
+        containerStyle,
+      ]}
     >
       <View style={styles.progressColumnContainer}>
         <View style={[styles.timerLabelsContainer]}>
@@ -78,12 +88,9 @@ const Slider = (props: Props) => {
           maximumValue={Math.floor(duration)}
           value={Math.floor(progress)}
           trackStyle={[styles.track, customTrackStyle]}
-          thumbStyle={[
-            styles.thumb,
-            customThumbStyle,
-            { borderColor: mainColor },
-          ]}
-          minimumTrackTintColor={mainColor}
+          thumbStyle={[styles.thumb, customThumbStyle]}
+          minimumTrackTintColor={minimumTrackTintColor}
+          maximumTrackTintColor={maximumTrackTintColor}
         />
       </View>
       {Boolean(onFullScreen) && (
@@ -91,11 +98,11 @@ const Slider = (props: Props) => {
           style={styles.fullScreenContainer}
           onPress={onFullScreen}
         >
-          <Image source={fullScreenImage} />
+          <Image source={require('./assets/ic_fullscreen.png')} />
         </TouchableOpacity>
       )}
     </View>
   );
 };
 
-export { Slider };
+export {Slider};

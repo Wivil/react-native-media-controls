@@ -1,30 +1,38 @@
-import React from "react";
-import { TouchableOpacity, View, ActivityIndicator, Image } from "react-native";
-import styles from "./MediaControls.style";
-import { getPlayerStateIcon } from "./utils";
-import { Props } from "./MediaControls";
-import { PLAYER_STATES } from "./constants/playerStates";
+import React, {ReactElement} from 'react';
+import {
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
+import styles from './MediaControls.style';
+import {getPlayerStateIcon} from './utils';
+import {Props} from './MediaControls';
+import {PLAYER_STATES} from './constants/playerStates';
 
 type ControlsProps = Pick<
   Props,
-  "isLoading" | "mainColor" | "playerState" | "onReplay"
+  'isLoading' | 'playerState' | 'onReplay'
 > & {
   onPause: () => void;
 };
 
-const Controls = (props: ControlsProps) => {
-  const { isLoading, mainColor, playerState, onReplay, onPause } = props;
+const Controls = (props: ControlsProps): ReactElement => {
+  const {isLoading, playerState, onReplay, onPause} = props;
   const icon = getPlayerStateIcon(playerState);
-  const pressAction = playerState === PLAYER_STATES.ENDED ? onReplay : onPause;
+  const pressAction =
+    playerState === PLAYER_STATES.ENDED ? onReplay : onPause;
 
   const content = isLoading ? (
     <ActivityIndicator size="large" color="#FFF" />
   ) : (
     <TouchableOpacity
-      style={[styles.playButton]} //, { backgroundColor: mainColor }]}
+      style={[styles.playButton]}
       onPress={pressAction}
-      accessibilityLabel={PLAYER_STATES.PAUSED ? "Tap to Play" : "Tap to Pause"}
-      accessibilityHint={"Plays and Pauses the Video"}
+      accessibilityLabel={
+        PLAYER_STATES.PAUSED ? 'Tap to Play' : 'Tap to Pause'
+      }
+      accessibilityHint={'Plays and Pauses the Video'}
     >
       <Image source={icon} style={styles.playIcon} />
     </TouchableOpacity>
@@ -33,4 +41,4 @@ const Controls = (props: ControlsProps) => {
   return <View style={[styles.controlsRow]}>{content}</View>;
 };
 
-export { Controls };
+export {Controls};
